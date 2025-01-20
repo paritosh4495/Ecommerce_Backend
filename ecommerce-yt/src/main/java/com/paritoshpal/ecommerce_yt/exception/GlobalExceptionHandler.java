@@ -24,7 +24,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(EmailAlreadyExistsException.class)
     public ResponseEntity<ApiResponse<String>> handleEmailAlreadyExistsException(EmailAlreadyExistsException e) {
         ApiResponse<String> apiResponse = new ApiResponse<>(null, e.getMessage());
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(apiResponse);
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(apiResponse);
     }
 
     @ExceptionHandler(CategoryNotFoundException.class)
@@ -42,8 +42,27 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(ProductAlreadyExistsException.class)
     public ResponseEntity<ApiResponse<String>> handleProductAlreadyExistsException(ProductAlreadyExistsException e) {
         ApiResponse<String> apiResponse = new ApiResponse<>(null, e.getMessage());
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(apiResponse);
+    }
+
+    @ExceptionHandler(RatingNotFoundException.class)
+    public ResponseEntity<ApiResponse<String>> handleRatingNotFoundException(RatingNotFoundException e) {
+        ApiResponse<String> apiResponse = new ApiResponse<>(null, e.getMessage());
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(apiResponse);
     }
+
+    @ExceptionHandler(ReviewNotFoundException.class)
+    public ResponseEntity<ApiResponse<String>> handleReviewNotFoundException(ReviewNotFoundException e) {
+        ApiResponse<String> apiResponse = new ApiResponse<>(null, e.getMessage());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(apiResponse);
+    }
+
+    @ExceptionHandler(UnauthorizedException.class)
+    public ResponseEntity<ApiResponse<String>> handleUnauthorizedException(UnauthorizedException e) {
+        ApiResponse<String> apiResponse = new ApiResponse<>(null, e.getMessage());
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(apiResponse);
+    }
+
 
 
 
