@@ -70,26 +70,25 @@ public class ProductServiceImpl implements ProductService {
     public Page<Product> getFilteredProducts(String category, List<String> colors, List<String> sizes, Integer minPrice, Integer maxPrice, Integer minDiscount, Integer maxDiscount, String sort, String stock, Integer pageNumber, Integer pageSize) {
         Pageable pageable = PageRequest.of(pageNumber, pageSize);
 
-        List<Product> products = productRepository.getFilteredProducts(category,minPrice,maxPrice,minDiscount,sort);
+        // Call the repository query
+        List<Product> products = productRepository.getFilteredProducts(
+                category != null && !category.isBlank() ? category : null,
+                minPrice,
+                maxPrice,
+                minDiscount,
+                maxDiscount,
+                colors != null && !colors.isEmpty() ? colors : null,
+                sizes != null && !sizes.isEmpty() ? sizes : null,
+                stock != null && !stock.isBlank() ? stock : null,
+                sort
+        );
 
-        if (!colors.isEmpty()){
-            products = products.stream().filter(p->colors.stream().anyMatch(c->c.equalsIgnoreCase(p.getColor()))).collect(Collectors.toList());
-        }
-        if(stock!=null){
-           if(stock.equals("in_stock")){
-               products = products.stream().filter(p->p.getQuantity()>0).collect(Collectors.toList());
-            }
-           else if (stock.equals("out_stock")){
-               products = products.stream().filter(p->p.getQuantity()<1).collect(Collectors.toList());
-           }
-        }
-        int startIndex = (int)pageable.getOffset();
-        int endIndex = Math.min(startIndex+pageable.getPageSize(),products.size());
-
+        // Pagination logic
+        int startIndex = (int) pageable.getOffset();
+        int endIndex = Math.min(startIndex + pageable.getPageSize(), products.size());
         List<Product> pageContent = products.subList(startIndex, endIndex);
-        Page<Product> filteredProducts = new PageImpl<>(pageContent,pageable,products.size());
 
-        return filteredProducts;
+        return new PageImpl<>(pageContent, pageable, products.size());
     }
 
 
