@@ -2,12 +2,10 @@ package com.paritoshpal.ecommerce_yt.service.review;
 
 import com.paritoshpal.ecommerce_yt.dto.review.ReviewRequestDTO;
 import com.paritoshpal.ecommerce_yt.dto.review.ReviewResponseDTO;
-import com.paritoshpal.ecommerce_yt.exception.ProductNotFoundException;
-import com.paritoshpal.ecommerce_yt.exception.ReviewNotFoundException;
-import com.paritoshpal.ecommerce_yt.exception.UnauthorizedException;
-import com.paritoshpal.ecommerce_yt.exception.UserNotFoundException;
+import com.paritoshpal.ecommerce_yt.exception.*;
 import com.paritoshpal.ecommerce_yt.mapper.review.ReviewMapper;
 import com.paritoshpal.ecommerce_yt.model.Product;
+import com.paritoshpal.ecommerce_yt.model.Rating;
 import com.paritoshpal.ecommerce_yt.model.Review;
 import com.paritoshpal.ecommerce_yt.model.User;
 import com.paritoshpal.ecommerce_yt.repository.ProductRepository;
@@ -59,6 +57,27 @@ public class ReviewServiceImpl implements ReviewService {
 
         reviewRepository.save(review);
         return reviewMapper.toReviewResponseDTO(review);
+    }
+
+    @Override
+    public ReviewResponseDTO updateReview(Long reviewId, ReviewRequestDTO reviewRequestDTO) {
+        if(reviewRequestDTO == null){
+            throw new IllegalArgumentException("reviewRequestDTO is null");
+        }
+
+        Review review = reviewRepository.findById(reviewId)
+                .orElseThrow(()-> new RatingNotFoundException("Rating not found"));
+
+        Long userId = getCurrentUserId();
+
+        if(!review.getUser().getId().equals(userId)){
+            throw new UnauthorizedException("You are not authorized to update this Review");
+        }
+
+        review.setReview(reviewRequestDTO.getReview());
+        reviewRepository.save(review);
+        return reviewMapper.toReviewResponseDTO(review);
+
     }
 
     @Override

@@ -1,5 +1,7 @@
 package com.paritoshpal.ecommerce_yt.controller;
 
+import com.paritoshpal.ecommerce_yt.dto.rating.RatingRequestDTO;
+import com.paritoshpal.ecommerce_yt.dto.rating.RatingResponseDTO;
 import com.paritoshpal.ecommerce_yt.dto.review.ReviewRequestDTO;
 import com.paritoshpal.ecommerce_yt.dto.review.ReviewResponseDTO;
 import com.paritoshpal.ecommerce_yt.response.ApiResponse;
@@ -24,6 +26,14 @@ public class ReviewController {
         ApiResponse<ReviewResponseDTO> response = new ApiResponse<>(createdReview, "Review created successfully");
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
+
+    @PutMapping("/update/{id}")
+    public ResponseEntity<ApiResponse<ReviewResponseDTO>> updateRating(@PathVariable Long id, @RequestBody ReviewRequestDTO reviewRequestDTO) {
+        ReviewResponseDTO updatedRating = reviewService.updateReview(id, reviewRequestDTO);
+        ApiResponse<ReviewResponseDTO> response = new ApiResponse<>(updatedRating, "Rating updated successfully");
+        return ResponseEntity.ok(response);
+    }
+
 
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponse<ReviewResponseDTO>> getReview(@PathVariable Long id) {
