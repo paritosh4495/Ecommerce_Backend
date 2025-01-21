@@ -8,6 +8,7 @@ import com.paritoshpal.ecommerce_yt.exception.UserNotFoundException;
 import com.paritoshpal.ecommerce_yt.mapper.user.UserMapper;
 import com.paritoshpal.ecommerce_yt.model.User;
 import com.paritoshpal.ecommerce_yt.repository.UserRepository;
+import com.paritoshpal.ecommerce_yt.service.cart.CartService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -22,6 +23,7 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
+    private final CartService cartService;
 
     @Override
     public UserResponseDTO createUser(UserRequestDTO userRequestDTO) {
@@ -47,6 +49,11 @@ public class UserServiceImpl implements UserService {
         Role defaultRole = Role.USER;
         user.setRole(defaultRole);
         User savedUser = userRepository.save(user);
+
+
+        // Initialize empty cart for the new user
+        cartService.initializeEmptyCart(savedUser);
+
         return userMapper.toUserResponseDTO(savedUser);
     }
 

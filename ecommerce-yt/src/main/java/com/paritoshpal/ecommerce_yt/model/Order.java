@@ -53,6 +53,7 @@ public class Order {
     private PaymentDetails paymentDetails = new PaymentDetails();
 
     @NotNull
+    @Column(name = "total_price")
     private BigDecimal totalPrice;
 
     private BigDecimal totalDiscountedPrice;
