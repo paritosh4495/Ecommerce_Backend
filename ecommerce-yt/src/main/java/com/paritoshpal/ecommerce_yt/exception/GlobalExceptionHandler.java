@@ -84,6 +84,18 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(apiResponse);
     }
 
+    @ExceptionHandler(OrderItemNotFoundException.class)
+    public ResponseEntity<ApiResponse<String>> handleOrderItemNotFoundException(OrderItemNotFoundException e) {
+        ApiResponse<String> apiResponse = new ApiResponse<>(null, e.getMessage());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(apiResponse);
+    }
+
+
+    @ExceptionHandler(InsufficientInventoryException.class)
+    public ResponseEntity<ApiResponse<String>> handleInsufficientInventoryException(InsufficientInventoryException e) {
+        ApiResponse<String> apiResponse = new ApiResponse<>(null, e.getMessage());
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(apiResponse);
+    }
 
 
 

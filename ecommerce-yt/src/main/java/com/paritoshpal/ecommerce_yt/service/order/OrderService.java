@@ -2,6 +2,8 @@ package com.paritoshpal.ecommerce_yt.service.order;
 
 import com.paritoshpal.ecommerce_yt.dto.order.OrderRequestDTO;
 import com.paritoshpal.ecommerce_yt.dto.order.OrderResponseDTO;
+import com.paritoshpal.ecommerce_yt.dto.order.OrderSummaryDTO;
+import com.paritoshpal.ecommerce_yt.model.Order;
 
 import java.util.List;
 
@@ -9,16 +11,26 @@ public interface OrderService {
 
     OrderResponseDTO createOrder(OrderRequestDTO orderRequestDTO);
 
-    List<OrderResponseDTO> usersOrderHistory(Long userId);
+    OrderResponseDTO getOrder(Long orderId);
+
+    List<OrderResponseDTO> usersDetailedOrderHistory(Long userId);
+
+    List<OrderSummaryDTO> usersOrderHistory(Long userId);
 
     OrderResponseDTO placeOrder(Long orderId);
 
+    // for ADMIN ONLY
     OrderResponseDTO confirmOrder(Long orderId);
 
     OrderResponseDTO shipOrder(Long orderId);
 
     OrderResponseDTO deliverOrder(Long orderId);
 
+    OrderResponseDTO initiateOrderReturn(Long orderId);
+
+    OrderResponseDTO confirmReturnOrder(Long orderId);
+
+    // CAN BE DONE BY BOTH ADMIN AND USER
     OrderResponseDTO cancelOrder(Long orderId);
 
     List<OrderResponseDTO> getAllOrders();

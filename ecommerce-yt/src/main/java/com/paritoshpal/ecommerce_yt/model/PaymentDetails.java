@@ -1,5 +1,6 @@
 package com.paritoshpal.ecommerce_yt.model;
 
+import com.paritoshpal.ecommerce_yt.enums.PaymentStatus;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -10,7 +11,7 @@ import lombok.NoArgsConstructor;
 public class PaymentDetails {
 
     private String paymentMethod;
-    private String status;
+    private PaymentStatus status;
     private String paymentId;
     private String razorpayPaymentLinkId;
     private String razorpayPaymentLinkReferenceId;

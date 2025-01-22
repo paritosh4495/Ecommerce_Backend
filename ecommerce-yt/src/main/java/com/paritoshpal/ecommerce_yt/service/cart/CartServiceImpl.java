@@ -2,14 +2,14 @@ package com.paritoshpal.ecommerce_yt.service.cart;
 
 import com.paritoshpal.ecommerce_yt.dto.cart.CartRequestDTO;
 import com.paritoshpal.ecommerce_yt.dto.cart.CartResponseDTO;
-import com.paritoshpal.ecommerce_yt.exception.CartItemNotFoundException;
-import com.paritoshpal.ecommerce_yt.exception.CartNotFoundException;
-import com.paritoshpal.ecommerce_yt.exception.UserNotFoundException;
+import com.paritoshpal.ecommerce_yt.exception.*;
 import com.paritoshpal.ecommerce_yt.mapper.cart.CartMapper;
 import com.paritoshpal.ecommerce_yt.model.Cart;
 import com.paritoshpal.ecommerce_yt.model.CartItem;
+import com.paritoshpal.ecommerce_yt.model.Product;
 import com.paritoshpal.ecommerce_yt.model.User;
 import com.paritoshpal.ecommerce_yt.repository.CartRepository;
+import com.paritoshpal.ecommerce_yt.repository.ProductRepository;
 import com.paritoshpal.ecommerce_yt.repository.UserRepository;
 import com.paritoshpal.ecommerce_yt.security.user.CustomUserDetails;
 import com.paritoshpal.ecommerce_yt.service.cartItem.CartItemService;
@@ -31,6 +31,7 @@ public class CartServiceImpl implements CartService {
     private final CartMapper cartMapper;
     private final UserRepository userRepository;
     private final CartItemService  cartItemService;
+    private final ProductRepository productRepository;
 
     @Override
     public CartResponseDTO addCartItem(CartRequestDTO cartRequestDTO) {
@@ -49,6 +50,14 @@ public class CartServiceImpl implements CartService {
                     cartRepository.save(newCart);
                     return newCart;
                 });
+
+        // Check Inventory! !
+        Product product = productRepository.findById(cartRequestDTO.getProductId())
+                .orElseThrow(() -> new ProductNotFoundException("Product not found"));
+        if (product.getQuantity() < cartRequestDTO.getQuantity()) {
+            throw new InsufficientInventoryException("Insufficient inventory for product: " + product.getTitle());
+        }
+
 
         // Create and add Cart ITem
         CartItem cartItem = cartItemService.createCartItem(cartRequestDTO);
