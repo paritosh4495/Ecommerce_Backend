@@ -233,14 +233,14 @@ public class OrderServiceImpl implements OrderService {
 
         Long userId = getCurrentUserId();
 
-        if(order.getUser().getId()!=userId || order.getUser().getId()==1){
-            throw new IllegalStateException("You Cannot place someone elses order");
+        if(order.getUser().getId()!=userId || userId==1){
+            throw new IllegalStateException("You Cannot Cancel someone else's order");
         }
         if(order.getOrderStatus().equals(OrderStatus.SHIPPED)){
             throw new IllegalArgumentException("Shipped order cannot be cancelled Please Retrun IT");
         }
-        order.setOrderStatus(OrderStatus.PLACED);
-        order.getPaymentDetails().setStatus(PaymentStatus.COMPLETED);
+        order.setOrderStatus(OrderStatus.CANCELLED);
+        order.getPaymentDetails().setStatus(PaymentStatus.REFUNDED);
         orderRepository.save(order);
         return orderMapper.toOrderResponseDTO(order);
     }
