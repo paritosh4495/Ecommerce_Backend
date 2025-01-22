@@ -1,6 +1,7 @@
 package com.paritoshpal.ecommerce_yt.dto.order;
 
 import com.paritoshpal.ecommerce_yt.dto.address.AddressDTO;
+import com.paritoshpal.ecommerce_yt.dto.address.AddressResponseDTO;
 import com.paritoshpal.ecommerce_yt.dto.orderItem.OrderItemDTO;
 import com.paritoshpal.ecommerce_yt.enums.OrderStatus;
 import com.paritoshpal.ecommerce_yt.model.PaymentDetails;
@@ -18,7 +19,7 @@ public class OrderResponseDTO {
     private List<OrderItemDTO> orderItems;
     private LocalDateTime orderDate;
     private LocalDateTime deliveryDate;
-    private AddressDTO address;
+    private AddressResponseDTO address;
     private PaymentDetails paymentDetails;
     private BigDecimal totalPrice;
     private BigDecimal totalDiscountedPrice;

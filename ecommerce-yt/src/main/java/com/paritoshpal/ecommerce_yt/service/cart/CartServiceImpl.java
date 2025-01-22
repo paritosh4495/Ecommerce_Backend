@@ -79,6 +79,21 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
+    public String clearCart(Long userId) {
+        Cart cart = cartRepository.findByUserId(userId);
+        if (cart == null) {
+            throw new CartNotFoundException("Cart not found");
+        }
+        cart.getCartItems().clear();
+        cart.setTotalItems(0);
+        cart.setTotalPrice(BigDecimal.ZERO);
+        cart.setTotalDiscountedPrice(BigDecimal.ZERO);
+        cart.setDiscount(0);
+        cartRepository.save(cart);
+        return "Cart Cleared Successfully";
+    }
+
+    @Override
     public CartResponseDTO removeCartItem(Long cartItemId) {
         Long userId = getCurrentUserId();
         Cart cart = cartRepository.findByUserId(userId);

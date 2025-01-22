@@ -15,6 +15,8 @@ public interface CartService {
 
     CartResponseDTO decreaseCartItemQuantity(Long cartItemId);
 
+    String clearCart(Long userId);
+
     void initializeEmptyCart(User user);
 
 

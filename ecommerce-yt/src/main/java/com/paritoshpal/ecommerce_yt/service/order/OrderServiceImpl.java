@@ -11,6 +11,7 @@ import com.paritoshpal.ecommerce_yt.exception.OrderNotFoundException;
 import com.paritoshpal.ecommerce_yt.exception.UserNotFoundException;
 import com.paritoshpal.ecommerce_yt.mapper.order.OrderMapper;
 import com.paritoshpal.ecommerce_yt.model.*;
+import com.paritoshpal.ecommerce_yt.repository.AddressRepository;
 import com.paritoshpal.ecommerce_yt.repository.CartRepository;
 import com.paritoshpal.ecommerce_yt.repository.OrderRepository;
 import com.paritoshpal.ecommerce_yt.repository.UserRepository;
@@ -38,9 +39,10 @@ public class OrderServiceImpl implements OrderService {
     private final OrderRepository orderRepository;
     private final OrderMapper orderMapper;
     private final UserRepository userRepository;
-    private final CartService cartService;
+    private final AddressRepository addressRepository;
     private final OrderItemService orderItemService;
     private final CartRepository cartRepository;
+    private final CartService cartService;
 
 
     @Override
@@ -51,9 +53,14 @@ public class OrderServiceImpl implements OrderService {
                 .orElseThrow(() -> new UserNotFoundException("User not found"));
         Cart cart = cartRepository.findByUser(user)
                 .orElseThrow(() -> new CartNotFoundException("Cart not found"));
-        if (cart == null) {
-            throw new IllegalStateException("Cart Cannot Be  Empty !");
+        // Check if the cart is empty
+        if (cart.getCartItems().isEmpty()) {
+            throw new IllegalStateException("Cart cannot be empty! Please add items to the cart.");
         }
+        orderRequestDTO.getAddress().setUser(user);
+        Address address = addressRepository.save(orderRequestDTO.getAddress());
+        user.getAddresses().add(address);
+        userRepository.save(user);
 
         Order order = new Order();
         order.setOrderId(UUID.randomUUID().toString());
@@ -62,6 +69,8 @@ public class OrderServiceImpl implements OrderService {
         order.setDeliveryDate(LocalDateTime.now().plusDays(7));
         order.setAddress(orderRequestDTO.getAddress());
         order.setOrderStatus(OrderStatus.PENDING);
+        order.setTotalPrice(BigDecimal.ZERO);
+        orderRepository.save(order);
 
         List<OrderItem> orderItems = cart.getCartItems().stream()
                 .map(cartItem -> {
@@ -92,10 +101,11 @@ public class OrderServiceImpl implements OrderService {
         order.setOrderStatus(OrderStatus.PENDING);
 
         orderRepository.save(order);
+        cartService.clearCart(userId);
 
-        // Clear the User's cart
-        cart.getCartItems().clear();
-        cartRepository.save(cart);
+        // Explicitly delete cart items from the database
+
+
 
         return orderMapper.toOrderResponseDTO(order);
 
