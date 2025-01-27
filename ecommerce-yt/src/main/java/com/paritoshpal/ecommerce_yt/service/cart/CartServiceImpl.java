@@ -79,6 +79,16 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
+    public CartResponseDTO getCurrentUserCart() {
+        Long userId = getCurrentUserId();
+        Cart cart = cartRepository.findByUserId(userId);
+        if(cart == null) {
+            throw new CartNotFoundException("Cart not found");
+        }
+        return cartMapper.toCartResponseDTO(cart);
+    }
+
+    @Override
     public String clearCart(Long userId) {
         Cart cart = cartRepository.findByUserId(userId);
         if (cart == null) {

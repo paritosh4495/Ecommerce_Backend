@@ -77,4 +77,11 @@ public class UserController {
         ApiResponse<String> response = new ApiResponse<>(message, "User deleted successfully");
         return ResponseEntity.ok(response);
     }
+
+    @GetMapping("/profile")
+    public ResponseEntity<ApiResponse<UserResponseDTO>> getCurrentUserProfile() {
+        UserResponseDTO currentUser = userService.getCurrentUserProfile();
+        ApiResponse<UserResponseDTO> response = new ApiResponse<>(currentUser, "User profile fetched successfully");
+        return ResponseEntity.ok(response);
+    }
 }

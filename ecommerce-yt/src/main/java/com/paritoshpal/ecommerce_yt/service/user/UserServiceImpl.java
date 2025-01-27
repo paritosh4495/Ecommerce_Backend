@@ -10,6 +10,8 @@ import com.paritoshpal.ecommerce_yt.model.User;
 import com.paritoshpal.ecommerce_yt.repository.UserRepository;
 import com.paritoshpal.ecommerce_yt.service.cart.CartService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -80,6 +82,12 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findByEmail(email).orElseThrow(()->
                 new UserNotFoundException("User with email " + email + " not found"));
         return userMapper.toUserResponseDTO(user);
+    }
+
+    @Override
+    public UserResponseDTO getCurrentUserProfile() {
+        String email = ((UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
+        return getUserByEmail(email); // Assuming you already have a method to fetch user by email
     }
 
     @Override

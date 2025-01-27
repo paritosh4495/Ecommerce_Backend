@@ -11,6 +11,8 @@ public interface CartService {
 
     CartResponseDTO findUserCart(Long userId);
 
+    CartResponseDTO getCurrentUserCart();
+
     CartResponseDTO removeCartItem(Long cartItemId);
 
     CartResponseDTO decreaseCartItemQuantity(Long cartItemId);

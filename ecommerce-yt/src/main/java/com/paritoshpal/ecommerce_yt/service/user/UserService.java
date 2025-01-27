@@ -12,7 +12,7 @@ public interface UserService {
     UserResponseDTO updateUser(Long id, UserRequestDTO userRequestDTO);
     UserResponseDTO getUserById(Long id);
     UserResponseDTO getUserByEmail(String email);
-
+    UserResponseDTO getCurrentUserProfile();
     List<UserResponseDTO> getAllUsers();
     String deleteUserById(Long id);
 

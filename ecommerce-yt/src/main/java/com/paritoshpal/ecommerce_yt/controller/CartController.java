@@ -34,6 +34,14 @@ public class CartController {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
+    @GetMapping()
+    public ResponseEntity<ApiResponse<CartResponseDTO>> geCurrentUserCart(
+    ) {
+        CartResponseDTO cartResponseDTO = cartService.getCurrentUserCart();
+        ApiResponse<CartResponseDTO> response = new ApiResponse<>(cartResponseDTO, "User cart retrieved successfully");
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
     @DeleteMapping("/remove/{cartItemId}")
     public ResponseEntity<ApiResponse<CartResponseDTO>> removeCartItem(
             @PathVariable Long cartItemId
