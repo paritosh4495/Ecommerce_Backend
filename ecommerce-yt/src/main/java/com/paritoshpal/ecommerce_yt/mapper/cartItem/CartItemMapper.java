@@ -15,5 +15,10 @@ public interface CartItemMapper {
 
 
     @Mapping(source = "product.id",target = "productId")
+    @Mapping(source = "product.title",target = "title")
+    @Mapping(source = "product.brand",target = "brand")
+    @Mapping(source = "product.discountPercentage",target ="discountPercentage" )
+    @Mapping(source = "product.imageUrl",target ="imageUrl" )
+    @Mapping(source = "product.color",target ="color" )
     CartItemResponseDTO toCartItemResponseDTO(CartItem cartItem);
 }

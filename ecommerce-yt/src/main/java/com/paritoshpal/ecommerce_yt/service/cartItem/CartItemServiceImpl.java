@@ -23,6 +23,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+
 @RequiredArgsConstructor
 @Service
 @Transactional
@@ -57,6 +59,9 @@ public class CartItemServiceImpl implements CartItemService {
 
             CartItem cartItem = cartItemRepository.getCartItemByProductAndSize(product,cartRequestDTO.getSize());
             cartItem.setQuantity(cartItem.getQuantity()+1);
+
+            cartItem.setPrice(cartItem.getPrice().add(cartRequestDTO.getPrice().multiply(BigDecimal.valueOf(cartRequestDTO.getQuantity()))));
+            cartItem.setDiscountedPrice(cartItem.getDiscountedPrice().add(product.getDiscountedPrice().multiply(BigDecimal.valueOf(cartRequestDTO.getQuantity()))));
             cartItemRepository.save(cartItem);
             return cartItem;
         }
@@ -69,8 +74,8 @@ public class CartItemServiceImpl implements CartItemService {
         cartItem.setProduct(product);
         cartItem.setSize(cartRequestDTO.getSize());
         cartItem.setQuantity(cartRequestDTO.getQuantity());
-        cartItem.setPrice(cartRequestDTO.getPrice());
-        cartItem.setDiscountedPrice(product.getDiscountedPrice());
+        cartItem.setPrice(cartRequestDTO.getPrice().multiply(BigDecimal.valueOf(cartRequestDTO.getQuantity())));
+        cartItem.setDiscountedPrice(product.getDiscountedPrice().multiply(BigDecimal.valueOf(cartRequestDTO.getQuantity())));
 
         return cartItemRepository.save(cartItem);
     }

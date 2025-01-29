@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2025-01-22T13:32:16+0530",
+    date = "2025-01-29T18:55:06+0530",
     comments = "version: 1.6.3, compiler: javac, environment: Java 21.0.5 (Oracle Corporation)"
 )
 @Component
@@ -39,6 +39,11 @@ public class CartItemMapperImpl implements CartItemMapper {
         CartItemResponseDTO cartItemResponseDTO = new CartItemResponseDTO();
 
         cartItemResponseDTO.setProductId( cartItemProductId( cartItem ) );
+        cartItemResponseDTO.setTitle( cartItemProductTitle( cartItem ) );
+        cartItemResponseDTO.setBrand( cartItemProductBrand( cartItem ) );
+        cartItemResponseDTO.setDiscountPercentage( cartItemProductDiscountPercentage( cartItem ) );
+        cartItemResponseDTO.setImageUrl( cartItemProductImageUrl( cartItem ) );
+        cartItemResponseDTO.setColor( cartItemProductColor( cartItem ) );
         cartItemResponseDTO.setId( cartItem.getId() );
         cartItemResponseDTO.setSize( cartItem.getSize() );
         cartItemResponseDTO.setQuantity( cartItem.getQuantity() );
@@ -54,5 +59,45 @@ public class CartItemMapperImpl implements CartItemMapper {
             return null;
         }
         return product.getId();
+    }
+
+    private String cartItemProductTitle(CartItem cartItem) {
+        Product product = cartItem.getProduct();
+        if ( product == null ) {
+            return null;
+        }
+        return product.getTitle();
+    }
+
+    private String cartItemProductBrand(CartItem cartItem) {
+        Product product = cartItem.getProduct();
+        if ( product == null ) {
+            return null;
+        }
+        return product.getBrand();
+    }
+
+    private int cartItemProductDiscountPercentage(CartItem cartItem) {
+        Product product = cartItem.getProduct();
+        if ( product == null ) {
+            return 0;
+        }
+        return product.getDiscountPercentage();
+    }
+
+    private String cartItemProductImageUrl(CartItem cartItem) {
+        Product product = cartItem.getProduct();
+        if ( product == null ) {
+            return null;
+        }
+        return product.getImageUrl();
+    }
+
+    private String cartItemProductColor(CartItem cartItem) {
+        Product product = cartItem.getProduct();
+        if ( product == null ) {
+            return null;
+        }
+        return product.getColor();
     }
 }

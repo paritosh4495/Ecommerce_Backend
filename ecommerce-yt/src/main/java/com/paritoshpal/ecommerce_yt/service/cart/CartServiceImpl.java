@@ -125,14 +125,24 @@ public class CartServiceImpl implements CartService {
     public CartResponseDTO decreaseCartItemQuantity(Long cartItemId) {
         Long userId = getCurrentUserId();
         Cart cart = cartRepository.findByUserId(userId);
-        if(cart == null) {
+        if (cart == null) {
             throw new CartNotFoundException("Cart not found");
         }
         CartItem cartItem = cart.getCartItems().stream()
                 .filter(item -> item.getId().equals(cartItemId))
                 .findFirst()
                 .orElseThrow(() -> new CartItemNotFoundException("CartItem not found"));
-        cartItem.setQuantity(cartItem.getQuantity() - 1);
+
+        int newQuantity = cartItem.getQuantity() - 1;
+        if (newQuantity <= 0) {
+            cart.getCartItems().remove(cartItem);
+            cartItemService.removeCartItem(cartItemId);
+        } else {
+            cartItem.setQuantity(newQuantity);
+            cartItem.setPrice(cartItem.getPrice().subtract(cartItem.getProduct().getPrice()));
+            cartItem.setDiscountedPrice(cartItem.getDiscountedPrice().subtract(cartItem.getProduct().getDiscountedPrice()));
+        }
+
         updateCartTotals(cart);
         cartRepository.save(cart);
         return cartMapper.toCartResponseDTO(cart);
@@ -152,18 +162,17 @@ public class CartServiceImpl implements CartService {
     private void updateCartTotals(Cart cart) {
         int totalItems = cart.getCartItems().stream().mapToInt(CartItem::getQuantity).sum();
         BigDecimal totalPrice = cart.getCartItems().stream()
-                .map(cartItem -> cartItem.getPrice().multiply(BigDecimal.valueOf(cartItem.getQuantity())))
+                .map(CartItem::getPrice)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
         BigDecimal totalDiscountedPrice = cart.getCartItems().stream()
-                .map(cartItem -> cartItem.getDiscountedPrice().multiply(BigDecimal.valueOf(cartItem.getQuantity())))
+                .map(CartItem::getDiscountedPrice)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
-        BigDecimal discount = totalPrice.subtract(totalDiscountedPrice);
-        int discountPercentage = discount.divide(totalPrice, 2, BigDecimal.ROUND_HALF_UP).multiply(BigDecimal.valueOf(100)).intValue();
+        int discount = totalPrice.subtract(totalDiscountedPrice).intValue();
 
         cart.setTotalItems(totalItems);
         cart.setTotalPrice(totalPrice);
         cart.setTotalDiscountedPrice(totalDiscountedPrice);
-        cart.setDiscount(discountPercentage);
+        cart.setDiscount(discount);
     }
     private Long getCurrentUserId() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
