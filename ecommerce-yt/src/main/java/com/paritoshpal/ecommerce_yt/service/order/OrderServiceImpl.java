@@ -16,6 +16,7 @@ import com.paritoshpal.ecommerce_yt.repository.CartRepository;
 import com.paritoshpal.ecommerce_yt.repository.OrderRepository;
 import com.paritoshpal.ecommerce_yt.repository.UserRepository;
 import com.paritoshpal.ecommerce_yt.security.user.CustomUserDetails;
+import com.paritoshpal.ecommerce_yt.service.address.AddressService;
 import com.paritoshpal.ecommerce_yt.service.cart.CartService;
 import com.paritoshpal.ecommerce_yt.service.orderItem.OrderItemService;
 import jakarta.transaction.Transactional;
@@ -39,10 +40,10 @@ public class OrderServiceImpl implements OrderService {
     private final OrderRepository orderRepository;
     private final OrderMapper orderMapper;
     private final UserRepository userRepository;
-    private final AddressRepository addressRepository;
     private final OrderItemService orderItemService;
     private final CartRepository cartRepository;
     private final CartService cartService;
+    private final AddressService addressService;
 
 
     @Override
@@ -57,25 +58,16 @@ public class OrderServiceImpl implements OrderService {
         if (cart.getCartItems().isEmpty()) {
             throw new IllegalStateException("Cart cannot be empty! Please add items to the cart.");
         }
-        orderRequestDTO.getAddress().setUser(user);
 
-        // Check if the same address is already present
-        Address address = user.getAddresses().stream()
-                .filter(addr -> addr.equals(orderRequestDTO.getAddress()))
-                .findFirst()
-                .orElseGet(() -> {
-                    Address newAddress = addressRepository.save(orderRequestDTO.getAddress());
-                    user.getAddresses().add(newAddress);
-                    userRepository.save(user);
-                    return newAddress;
-                });
+        Address address = addressService.findOrCreateAddress(user, orderRequestDTO.getAddress());
+
 
         Order order = new Order();
         order.setOrderId(UUID.randomUUID().toString());
         order.setUser(user);
         order.setOrderDate(LocalDateTime.now());
         order.setDeliveryDate(LocalDateTime.now().plusDays(7));
-        order.setAddress(orderRequestDTO.getAddress());
+        order.setAddress(address);  // Set the address here
         order.setOrderStatus(OrderStatus.PENDING);
         order.setTotalPrice(BigDecimal.ZERO);
         orderRepository.save(order);

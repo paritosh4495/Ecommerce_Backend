@@ -7,6 +7,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.Objects;
+
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
@@ -43,4 +45,24 @@ public class Address {
     private User user;
 
     private String mobile;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Address address = (Address) o;
+        return Objects.equals(firstName, address.firstName) &&
+                Objects.equals(lastName, address.lastName) &&
+                Objects.equals(streetAddress, address.streetAddress) &&
+                Objects.equals(city, address.city) &&
+                Objects.equals(state, address.state) &&
+                Objects.equals(zipCode, address.zipCode) &&
+                Objects.equals(mobile, address.mobile);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(firstName, lastName, streetAddress, city, state, zipCode, mobile);
+    }
+
 }
