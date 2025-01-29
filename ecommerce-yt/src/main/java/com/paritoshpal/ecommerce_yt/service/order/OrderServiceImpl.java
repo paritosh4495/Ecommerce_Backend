@@ -58,9 +58,17 @@ public class OrderServiceImpl implements OrderService {
             throw new IllegalStateException("Cart cannot be empty! Please add items to the cart.");
         }
         orderRequestDTO.getAddress().setUser(user);
-        Address address = addressRepository.save(orderRequestDTO.getAddress());
-        user.getAddresses().add(address);
-        userRepository.save(user);
+
+        // Check if the same address is already present
+        Address address = user.getAddresses().stream()
+                .filter(addr -> addr.equals(orderRequestDTO.getAddress()))
+                .findFirst()
+                .orElseGet(() -> {
+                    Address newAddress = addressRepository.save(orderRequestDTO.getAddress());
+                    user.getAddresses().add(newAddress);
+                    userRepository.save(user);
+                    return newAddress;
+                });
 
         Order order = new Order();
         order.setOrderId(UUID.randomUUID().toString());
@@ -272,13 +280,14 @@ public class OrderServiceImpl implements OrderService {
     private void updateOrderTotals(Order order) {
         int totalItems = order.getOrderItems().stream().mapToInt(OrderItem::getQuantity).sum();
         BigDecimal totalPrice = order.getOrderItems().stream()
-                .map(orderItem -> orderItem.getPrice().multiply(BigDecimal.valueOf(orderItem.getQuantity())))
+                .map(OrderItem::getPrice)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
         BigDecimal totalDiscountedPrice = order.getOrderItems().stream()
-                .map(orderItem -> orderItem.getDiscountedPrice().multiply(BigDecimal.valueOf(orderItem.getQuantity())))
+                .map(OrderItem::getDiscountedPrice)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
         BigDecimal discount = totalPrice.subtract(totalDiscountedPrice);
-        int discountPercentage = discount.divide(totalPrice, 2, BigDecimal.ROUND_HALF_UP).multiply(BigDecimal.valueOf(100)).intValue();
+        int discountPercentage = totalPrice.compareTo(BigDecimal.ZERO) > 0 ?
+                discount.divide(totalPrice, 2, BigDecimal.ROUND_HALF_UP).multiply(BigDecimal.valueOf(100)).intValue() : 0;
 
         order.setTotalItems(totalItems);
         order.setTotalPrice(totalPrice);
