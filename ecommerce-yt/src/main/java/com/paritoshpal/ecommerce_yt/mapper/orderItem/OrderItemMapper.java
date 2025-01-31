@@ -10,6 +10,9 @@ import org.mapstruct.Mapping;
 public interface OrderItemMapper {
 
     @Mapping(source = "product.id",target = "productId")
+    @Mapping(source = "product.title",target = "title")
+    @Mapping(source = "product.brand",target = "brand")
+    @Mapping(source = "product.imageUrl",target = "imageUrl")
     OrderItemDTO toOrderItemDTO(OrderItem orderItem);
 
 }

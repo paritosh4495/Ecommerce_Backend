@@ -3,8 +3,10 @@ package com.paritoshpal.ecommerce_yt.controller;
 import com.paritoshpal.ecommerce_yt.dto.order.OrderRequestDTO;
 import com.paritoshpal.ecommerce_yt.dto.order.OrderResponseDTO;
 import com.paritoshpal.ecommerce_yt.dto.order.OrderSummaryDTO;
+import com.paritoshpal.ecommerce_yt.model.Order;
 import com.paritoshpal.ecommerce_yt.response.ApiResponse;
 import com.paritoshpal.ecommerce_yt.service.order.OrderService;
+import com.razorpay.RazorpayException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -52,13 +54,7 @@ public class OrderController {
         return ResponseEntity.ok(response);
     }
 
-    @PreAuthorize("hasRole('USER')")
-    @PostMapping("/place/{orderId}")
-    public ResponseEntity<ApiResponse<OrderResponseDTO>> placeOrder(@PathVariable Long orderId) {
-        OrderResponseDTO placedOrder = orderService.placeOrder(orderId);
-        ApiResponse<OrderResponseDTO> response = new ApiResponse<>(placedOrder, "Order placed successfully");
-        return ResponseEntity.ok(response);
-    }
+
 
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/confirm/{orderId}")
@@ -123,4 +119,9 @@ public class OrderController {
         ApiResponse<String> response = new ApiResponse<>(message, "Order deleted successfully");
         return ResponseEntity.ok(response);
     }
+
+//    @GetMapping("/payOrder")
+//    public String orderPage(){
+//        return "orderPage";
+//    }
 }

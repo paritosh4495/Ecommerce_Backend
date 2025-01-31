@@ -11,7 +11,6 @@ import com.paritoshpal.ecommerce_yt.exception.OrderNotFoundException;
 import com.paritoshpal.ecommerce_yt.exception.UserNotFoundException;
 import com.paritoshpal.ecommerce_yt.mapper.order.OrderMapper;
 import com.paritoshpal.ecommerce_yt.model.*;
-import com.paritoshpal.ecommerce_yt.repository.AddressRepository;
 import com.paritoshpal.ecommerce_yt.repository.CartRepository;
 import com.paritoshpal.ecommerce_yt.repository.OrderRepository;
 import com.paritoshpal.ecommerce_yt.repository.UserRepository;
@@ -19,15 +18,16 @@ import com.paritoshpal.ecommerce_yt.security.user.CustomUserDetails;
 import com.paritoshpal.ecommerce_yt.service.address.AddressService;
 import com.paritoshpal.ecommerce_yt.service.cart.CartService;
 import com.paritoshpal.ecommerce_yt.service.orderItem.OrderItemService;
+
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -44,6 +44,10 @@ public class OrderServiceImpl implements OrderService {
     private final CartRepository cartRepository;
     private final CartService cartService;
     private final AddressService addressService;
+
+
+
+
 
 
     @Override
@@ -135,23 +139,6 @@ public class OrderServiceImpl implements OrderService {
 
     }
 
-    @Override
-    public OrderResponseDTO placeOrder(Long orderId) {
-
-        Order order = orderRepository.findById(orderId)
-                .orElseThrow(() -> new OrderNotFoundException("Order not found"));
-
-        Long userId = getCurrentUserId();
-
-        if(order.getUser().getId()!=userId){
-            throw new IllegalStateException("You Cannot place someone elses order");
-        }
-        order.setOrderStatus(OrderStatus.PLACED);
-        order.getPaymentDetails().setStatus(PaymentStatus.COMPLETED);
-        orderRepository.save(order);
-        return orderMapper.toOrderResponseDTO(order);
-
-    }
 
     @Override
     public OrderResponseDTO confirmOrder(Long orderId) {
@@ -263,6 +250,9 @@ public class OrderServiceImpl implements OrderService {
         return "Order Deleted Successfully";
     }
 
+
+
+
     private Long getCurrentUserId() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
@@ -277,13 +267,11 @@ public class OrderServiceImpl implements OrderService {
         BigDecimal totalDiscountedPrice = order.getOrderItems().stream()
                 .map(OrderItem::getDiscountedPrice)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
-        BigDecimal discount = totalPrice.subtract(totalDiscountedPrice);
-        int discountPercentage = totalPrice.compareTo(BigDecimal.ZERO) > 0 ?
-                discount.divide(totalPrice, 2, BigDecimal.ROUND_HALF_UP).multiply(BigDecimal.valueOf(100)).intValue() : 0;
+        int discount = totalPrice.subtract(totalDiscountedPrice).intValue();
 
         order.setTotalItems(totalItems);
         order.setTotalPrice(totalPrice);
         order.setTotalDiscountedPrice(totalDiscountedPrice);
-        order.setDiscount(discountPercentage);
+        order.setDiscount(discount);
     }
 }

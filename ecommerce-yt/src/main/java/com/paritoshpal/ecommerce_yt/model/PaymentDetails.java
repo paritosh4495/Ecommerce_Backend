@@ -12,6 +12,7 @@ public class PaymentDetails {
 
     private String paymentMethod;
     private PaymentStatus status;
+    private String razorypayOrderId;
     private String paymentId;
     private String razorpayPaymentLinkId;
     private String razorpayPaymentLinkReferenceId;

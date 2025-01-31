@@ -4,6 +4,7 @@ import com.paritoshpal.ecommerce_yt.dto.order.OrderRequestDTO;
 import com.paritoshpal.ecommerce_yt.dto.order.OrderResponseDTO;
 import com.paritoshpal.ecommerce_yt.dto.order.OrderSummaryDTO;
 import com.paritoshpal.ecommerce_yt.model.Order;
+import com.razorpay.RazorpayException;
 
 import java.util.List;
 
@@ -17,7 +18,6 @@ public interface OrderService {
 
     List<OrderSummaryDTO> usersOrderHistory(Long userId);
 
-    OrderResponseDTO placeOrder(Long orderId);
 
     // for ADMIN ONLY
     OrderResponseDTO confirmOrder(Long orderId);
@@ -36,4 +36,5 @@ public interface OrderService {
     List<OrderResponseDTO> getAllOrders();
 
     String deleteOrder(Long orderId);
+
 }
