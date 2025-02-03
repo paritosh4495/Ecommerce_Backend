@@ -54,7 +54,7 @@ public class PaymentServiceImpl implements PaymentService {
         notify.put("email", true);
         paymentLinkRequest.put("notify", notify);
 
-        paymentLinkRequest.put("callback_url", "https://dhruvzonecommerce.vercel.app/payment/" + orderId);
+        paymentLinkRequest.put("callback_url", "http://localhost:3000/payment/" + orderId);
         paymentLinkRequest.put("callback_method", "get");
 
         PaymentLink paymentLink = razorpayClient.paymentLink.create(paymentLinkRequest);
