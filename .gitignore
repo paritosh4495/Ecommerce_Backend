@@ -1,2 +1,59 @@
-.idea
-target
+pran...@gmail.com's profile photo
+pran...@gmail.com
+unread,
+Mar 5, 2019, 10:16:35 AM
+to Serenity BDD Users Group
+In my Serenity Java testing project, after the tests have been run, the target and it's sub directory 'site' will be filled with tens of files and directories to display reports and screenshots.
+Of course, I don't want to commit all those files in to git repository, and even don't want to  see them being tracked.
+I did  do this in my .ignore file which is at the top level of the project along with pom.xml as shown
+## Any un needed file any where in the project file structure.
+
+*.class
+
+*.tmp
+
+*.jar
+
+*.html
+
+*.png
+
+*.json
+
+*.csv
+
+*.DS_Store
+
+
+
+# any eclipse project file.
+
+.eclipse
+
+.classpath
+
+
+
+## All the folders underneath site folder
+
+**/site
+
+site/
+
+site/*
+
+
+
+## target folder at the top level of the project structue and paths and contents underneath it
+
+target/
+
+target/*
+
+
+
+## target folder at any level of the project structue
+
+**/target
+
+/target
