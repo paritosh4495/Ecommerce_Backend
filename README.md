@@ -101,4 +101,4 @@ The application initializes default data, such as an admin user, when it starts.
 ## Conclusion
 The **Ecommerce-YT** project is a feature-rich e-commerce platform designed to provide a seamless shopping experience for users and efficient management tools for administrators. With its robust architecture, security features, and comprehensive functionality, it is well-suited for any online retail business.
 
-Thank you for exploring the **Ecommerce-YT** project. We hope this overview provides a clear understanding of the platform's capabilities and structure. If you have any questions or need further information, please feel free to reach out.
+Thank you for exploring the **Ecommerce-YT** project. We hope this overview provides a clear understanding of the platform's capabilities and structure. If you have any questions or need further information, please feel free to reach out.Thank you
